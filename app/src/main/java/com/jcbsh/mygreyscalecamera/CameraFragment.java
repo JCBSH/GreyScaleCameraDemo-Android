@@ -82,6 +82,7 @@ public class CameraFragment extends AbstractCameraFragment {
         mCaptureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mFragmentCallback.setPBarVisibility(true);
                 takePhoto();
             }
         });

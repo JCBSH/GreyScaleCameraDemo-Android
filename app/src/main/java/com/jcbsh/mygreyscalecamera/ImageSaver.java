@@ -6,6 +6,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Message;
 import android.renderscript.Allocation;
 import android.renderscript.RenderScript;
 import android.util.Log;
@@ -73,6 +74,9 @@ public class ImageSaver implements Runnable {
                 e.printStackTrace();
             } finally {
                 //mImage.close();
+                Message bitmapMessage = mHandler.obtainMessage(AbstractCameraFragment.WHAT_FILE_SAVED);
+                bitmapMessage.sendToTarget();
+
                 if(fileOutputStream != null) {
                     try {
                         fileOutputStream.close();
@@ -81,6 +85,8 @@ public class ImageSaver implements Runnable {
                     }
                 }
             }
+
+
 
         } else {
             //Log.d(TAG, "bytes length: " + bytes.length);
@@ -144,6 +150,9 @@ public class ImageSaver implements Runnable {
                     e.printStackTrace();
                 } finally {
                     //mImage.close();
+                    Message bitmapMessage = mHandler.obtainMessage(AbstractCameraFragment.WHAT_FILE_SAVED);
+                    bitmapMessage.sendToTarget();
+
                     if(fileOutputStream != null) {
                         try {
                             fileOutputStream.close();

@@ -29,12 +29,11 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".ListVideoActivity"
+            android:name=".ListImageActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".AnalyserActivity"
-            android:exported="true"
+            android:name=".ImageActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>

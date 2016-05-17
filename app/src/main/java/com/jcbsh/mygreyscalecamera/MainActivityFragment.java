@@ -32,7 +32,7 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
-        Button mRecordVideoButton = (Button) v.findViewById(R.id.recordVideo_button);
+        Button mRecordVideoButton = (Button) v.findViewById(R.id.capture_image_button);
         mRecordVideoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,11 +41,11 @@ public class MainActivityFragment extends Fragment {
             }
         });
 
-        Button mListVideoButton = (Button) v.findViewById(R.id.analysisFrames_button);
+        Button mListVideoButton = (Button) v.findViewById(R.id.view_images_button);
         mListVideoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ListVideoActivity.class);
+                Intent intent = new Intent(getActivity(), ListImageActivity.class);
                 startActivity(intent);
             }
         });

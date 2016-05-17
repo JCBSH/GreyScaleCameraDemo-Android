@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.RectF;
@@ -53,6 +52,10 @@ import java.util.List;
  */
 abstract class AbstractCameraFragment extends Fragment {
 
+    interface FragmentCallback {
+        public void setPBarVisibility(boolean b);
+        public boolean isPBarVisibility();
+    }
 
     abstract protected String getFragmentTag();
     abstract protected String getFragmentLifeTag();
@@ -69,6 +72,8 @@ abstract class AbstractCameraFragment extends Fragment {
     private static final int REQUEST_ACCESS_FINE_LOCATION_PERMISSION_RESULT = 2;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION_RESULT = 3;
 
+
+    protected FragmentCallback mFragmentCallback;
 
     protected HandlerThread mImageSaverThread;
     protected Handler mImageSaverHandler;
@@ -93,6 +98,7 @@ abstract class AbstractCameraFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         Log.d(getFragmentLifeTag(), "onAttach() ");
+        mFragmentCallback = (FragmentCallback) activity;
     }
 
     @Override
@@ -127,6 +133,7 @@ abstract class AbstractCameraFragment extends Fragment {
         openBackgroundThread();
 
         invalidateOptionsMenu(false);
+        mFragmentCallback.setPBarVisibility(false);
 
         if(getPreViewTextureView().isAvailable()) {
             setupCamera(getPreViewTextureView().getWidth(), getPreViewTextureView().getHeight());
@@ -227,6 +234,7 @@ abstract class AbstractCameraFragment extends Fragment {
     public void onDetach() {
         Log.d(getFragmentLifeTag(), "onDetach() ");
         super.onDetach();
+        mFragmentCallback = null;
     }
 
 ////---------------------------------------------////
@@ -824,9 +832,7 @@ abstract class AbstractCameraFragment extends Fragment {
 ////////////////////////////////UI HANDLER SECTION//////////////////////////////
 ////////////////////////////////UI HANDLER SECTION//////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-    public static final int WHAT_GREY_SCALE_BITMAP = 0;
-    public static final int WHAT_SET_IMAGE_BITMAP = 1;
-    public static final int WHAT_VIDEO_FINISHED = 2;
+    public static final int WHAT_FILE_SAVED = 0;
     protected class UiHandler extends Handler {
         public UiHandler(Looper mainLooper) {
             super(mainLooper);
@@ -835,23 +841,10 @@ abstract class AbstractCameraFragment extends Fragment {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-
-            Bitmap bitmap = null;
             switch (msg.what) {
-//                case WHAT_GREY_SCALE_BITMAP:
-//                    bitmap = (Bitmap) msg.obj;
-//
-//
-//                    break;
-//                case WHAT_SET_IMAGE_BITMAP:
-//                    if (getGreyScaleView() == null) return;
-//                    bitmap = (Bitmap) msg.obj;
-//                    Log.d(getFragmentTag(), "WHAT_SET_IMAGE_BITMAP   setImageBitmap");
-//                    getGreyScaleView().setImageBitmap(bitmap);
-//                    break;
-//                case WHAT_VIDEO_FINISHED:
-//                    getGreyScaleView().setVisibility(View.INVISIBLE);
-//                    break;
+                case WHAT_FILE_SAVED:
+                    mFragmentCallback.setPBarVisibility(false);
+                    break;
             }
         }
     }

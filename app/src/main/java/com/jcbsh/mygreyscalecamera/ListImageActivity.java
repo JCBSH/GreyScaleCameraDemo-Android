@@ -5,20 +5,12 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-/**
- * Created by JCBSH on 14/03/2016.
- */
-public class AnalyserActivity extends SingleFragmentActivity{
-
+public class ListImageActivity extends SingleFragmentActivity {
 
     @Override
     protected Fragment createFragment() {
-        String path = getIntent().getStringExtra(AnalyserFragment.EXTRA_VIDEO_FILE_PATH);
-
-        Fragment fragment = AnalyserFragment.getInstance(path);
-        return fragment;
+        return ListImageFragment.getInstance();
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +31,5 @@ public class AnalyserActivity extends SingleFragmentActivity{
         }
 
     }
-    @Override
-    protected int getLayoutResId() {
-        return R.layout.activity_camera;
-    }
+
 }

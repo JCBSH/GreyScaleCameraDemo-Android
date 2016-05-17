@@ -19,13 +19,13 @@ import java.io.File;
 /**
  * Created by JCBSH on 9/03/2016.
  */
-public class ListVideoFragment extends Fragment{
+public class ListImageFragment extends Fragment{
 
-    private static final String TAG = ListVideoFragment.class.getSimpleName();
+    private static final String TAG = ListImageFragment.class.getSimpleName();
     private ListView listView;
 
     public static Fragment getInstance() {
-        Fragment fragment = new ListVideoFragment();
+        Fragment fragment = new ListImageFragment();
         return fragment;
     }
 
@@ -42,10 +42,9 @@ public class ListVideoFragment extends Fragment{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 File file = (File) listView.getItemAtPosition(position);
-                Intent intent = new Intent(getActivity(), AnalyserActivity.class);
-                intent.putExtra(AnalyserFragment.EXTRA_VIDEO_FILE_PATH, file.getPath());
+                Intent intent = new Intent(getActivity(), ImageActivity.class);
+                intent.putExtra(ImageActivity.EXTRA_VIDEO_FILE_PATH, file.getPath());
                 startActivity(intent);
-                //Log.d(TAG, "files: " +  file.getName());
             }
         });
         return v;

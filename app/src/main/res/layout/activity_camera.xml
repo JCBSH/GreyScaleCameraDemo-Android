@@ -23,11 +23,39 @@
     </android.support.design.widget.AppBarLayout>
 
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                 xmlns:tools="http://schemas.android.com/tools"
-                 android:layout_width="match_parent"
+    <FrameLayout android:layout_width="match_parent"
                  android:layout_height="match_parent"
                  android:id="@+id/fragmentContainer">
+
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:id="@+id/progressContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:visibility="invisible">
+        <LinearLayout
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                style="@style/MyTheme"
+
+                android:textColor="@android:color/holo_blue_light"
+                android:text="Connecting to scanner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <ProgressBar
+                style="@android:style/Widget.Material.Light.ProgressBar.Large"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
 
     </FrameLayout>
 
