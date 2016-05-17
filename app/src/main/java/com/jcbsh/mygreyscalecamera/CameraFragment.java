@@ -108,10 +108,6 @@ public class CameraFragment extends AbstractCameraFragment {
         super.onDestroy();
     }
 
-    @Override
-    protected void openBackgroundThread() {
-        super.openBackgroundThread();
-    }
 
 
 ////////////////////////////////////////////////////////////////////////////////

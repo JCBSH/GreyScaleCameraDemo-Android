@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -43,7 +42,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -78,10 +76,6 @@ abstract class AbstractCameraFragment extends Fragment {
     protected Handler mImageSaverHandler;
     protected HandlerThread mBackgroundThread;
     protected Handler mBackgroundHandler;
-    protected HandlerThread mFrameQueueThread;
-    protected Handler mFrameQueueHandler;
-    protected HandlerThread mFrameDeQueueThread;
-    protected Handler mFrameDeQueueHandler;
     protected Handler mHandler;
 
     protected boolean mMenuAvailable = false;
@@ -155,41 +149,21 @@ abstract class AbstractCameraFragment extends Fragment {
         mImageSaverThread.start();
         mImageSaverHandler = new Handler(mImageSaverThread.getLooper());
 
-        mFrameQueueThread =  new HandlerThread("Frame Queue background thread");
-        mFrameQueueThread.start();
-        mFrameQueueHandler = new Handler(mFrameQueueThread.getLooper());
-
-
-        mFrameDeQueueThread =  new HandlerThread("Frame DeQueue background thread");
-        mFrameDeQueueThread.start();
-        mFrameDeQueueHandler = new Handler(mFrameDeQueueThread.getLooper());
 
         mHandler = new Handler(Looper.getMainLooper());
     }
 
     protected void closeBackgroundThread() {
 
-        mFrameDeQueueThread.interrupt();
-        mFrameQueueHandler.removeCallbacksAndMessages(null);
-        mFrameQueueThread.interrupt();
-
         mBackgroundThread.quitSafely();
         mImageSaverThread.quitSafely();
-        mFrameQueueThread.quitSafely();
-        mFrameDeQueueThread.quitSafely();
         try {
             mBackgroundThread.join();
             mBackgroundThread = null;
             mImageSaverThread.join();
             mImageSaverThread = null;
-            mFrameQueueThread.join();
-            mFrameQueueThread = null;
-            mFrameDeQueueThread.join();
-            mFrameDeQueueThread = null;
             mImageSaverHandler = null;
             mBackgroundHandler = null;
-            mFrameQueueHandler = null;
-            mFrameDeQueueHandler = null;
 
             mHandler = null;
         } catch (InterruptedException e) {
@@ -343,13 +317,6 @@ abstract class AbstractCameraFragment extends Fragment {
     }
 
 
-    protected static final HashMap<Integer, Integer> ORIENTATIONS_SCREEN = new HashMap<Integer, Integer>();
-    static {
-        ORIENTATIONS_SCREEN.put(Surface.ROTATION_0, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        ORIENTATIONS_SCREEN.put(Surface.ROTATION_90, ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        ORIENTATIONS_SCREEN.put(Surface.ROTATION_180, ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
-        ORIENTATIONS_SCREEN.put(Surface.ROTATION_270, ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-    }
 
     private TextureView.SurfaceTextureListener mSurfaceTextureListener =
             new TextureView.SurfaceTextureListener() {
