@@ -6,7 +6,6 @@ import android.hardware.camera2.CaptureRequest;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.os.Message;
 import android.renderscript.Allocation;
 import android.renderscript.RenderScript;
 import android.util.Log;
@@ -21,8 +20,9 @@ import java.nio.ByteBuffer;
 public class ImageSaver implements Runnable {
 
     public static final int CAPTURE_REFERENCE = 0;
-    public static final int CAPTURE_SCAN = 1;
+    public static final int CAPTURE_BITMAP = 1;
     public static final int CAPTURE_FILE = 2;
+    public static final int CAPTURE_GREY_SCALE_FILE = 3;
 
 
     private static final String TAG = ImageSaver.class.getSimpleName();
@@ -62,24 +62,7 @@ public class ImageSaver implements Runnable {
         byte[] bytes = new byte[byteBuffer.remaining()];
         byteBuffer.get(bytes);
         mImage.close();
-        if (tag != CAPTURE_FILE) {
-            //Log.d(TAG, "bytes length: " + bytes.length);
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            mBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
-
-
-            long start = System.currentTimeMillis();
-            mInAllocation = Allocation.createFromBitmap(mRS, mBitmap);
-
-            mOutAllocations = Allocation.createFromBitmap(mRS, mBitmap);
-
-            RenderScriptTask renderScriptTask = new RenderScriptTask();
-            renderScriptTask.setTag(tag);
-            renderScriptTask.execute(mInAllocation, mOutAllocations);
-
-
-        } else {
+        if (tag == CAPTURE_FILE) {
             Log.d(TAG, " CAPTURE_FILE");
             FileOutputStream fileOutputStream = null;
 
@@ -98,6 +81,22 @@ public class ImageSaver implements Runnable {
                     }
                 }
             }
+
+        } else {
+            //Log.d(TAG, "bytes length: " + bytes.length);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            mBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+
+
+            long start = System.currentTimeMillis();
+            mInAllocation = Allocation.createFromBitmap(mRS, mBitmap);
+
+            mOutAllocations = Allocation.createFromBitmap(mRS, mBitmap);
+
+            RenderScriptTask renderScriptTask = new RenderScriptTask();
+            renderScriptTask.setTag(tag);
+            renderScriptTask.execute(mInAllocation, mOutAllocations);
         }
 
         //mImage.close();
@@ -134,15 +133,26 @@ public class ImageSaver implements Runnable {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if (tag == CAPTURE_REFERENCE) {
-                Log.d(TAG, " CAPTURE_REFERENCE");
-                //ScanFragment.sReferenceGrayScale = rgbInts;
+            if (tag == CAPTURE_GREY_SCALE_FILE) {
+                Log.d(TAG, " CAPTURE_GREY_SCALE_FILE");
+                FileOutputStream fileOutputStream = null;
 
-            } else if (tag == CAPTURE_SCAN){
-                Log.d(TAG, " CAPTURE_SCAN");
-                Message bitmapMessage = mHandler.obtainMessage(AbstractCameraFragment.WHAT_GREY_SCALE_BITMAP
-                        , mBitmap);
-                bitmapMessage.sendToTarget();
+                try {
+                    fileOutputStream = new FileOutputStream(mImageFile);
+                    mBitmap.compress(Bitmap.CompressFormat.JPEG, 90, fileOutputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    //mImage.close();
+                    if(fileOutputStream != null) {
+                        try {
+                            fileOutputStream.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
             }
         }
 

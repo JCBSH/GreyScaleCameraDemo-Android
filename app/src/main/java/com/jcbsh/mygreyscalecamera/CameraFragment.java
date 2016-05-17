@@ -38,18 +38,14 @@ public class CameraFragment extends AbstractCameraFragment {
         return fragment;
     }
 
-    private static final String LIFE_TAG = "life_ScanFragment";
+    private static final String LIFE_TAG = "life_CameraFragment";
     private static final String TAG = CameraFragment.class.getSimpleName();
-
-
-    //249084ms for 200 photos with end pos at 500 and start at 1500
-    //611111ms for 500 photos with end pos at 500 and start at 1500
 
     private static final int TARGET_RESOLUTION = 8000000;
 
     private Long mStartTime;
     private CaptureRequest mCaptureRequest;
-    private int mCaptureType;
+    private int mCaptureType = ImageSaver.CAPTURE_GREY_SCALE_FILE;
     private RenderScript mRS;
     private ScriptC_saturation mScript;
     private final UiHandler mUiHandler = new UiHandler(Looper.getMainLooper());
@@ -155,7 +151,7 @@ public class CameraFragment extends AbstractCameraFragment {
                         public void onCaptureStarted(CameraCaptureSession session, CaptureRequest request, long timestamp, long frameNumber) {
                             super.onCaptureStarted(session, request, timestamp, frameNumber);
                             mCaptureRequest = request;
-                            if (mCaptureType == ImageSaver.CAPTURE_FILE) {
+                            if (mCaptureType == ImageSaver.CAPTURE_FILE || mCaptureType == ImageSaver.CAPTURE_GREY_SCALE_FILE) {
                                 mImageFile = getImageFile();
                             }
 
