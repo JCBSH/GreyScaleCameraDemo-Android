@@ -125,8 +125,10 @@ public class CameraFragment extends AbstractCameraFragment {
             new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
+                    int orientation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
+                    Log.d(TAG, "image capture orientation " +orientation);
                     mImageSaverHandler.post(new ImageSaver(reader.acquireNextImage(), mUiHandler,
-                            mCaptureRequest, mImageFile, mScript, mRS));
+                            mCaptureRequest, mImageFile, mScript, mRS, orientation));
                 }
             };
 

@@ -3,6 +3,7 @@ package com.jcbsh.mygreyscalecamera;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.camera2.CaptureRequest;
+import android.media.ExifInterface;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -31,6 +32,7 @@ public class ImageSaver implements Runnable {
     private final CaptureRequest mCaptureRequest;
     private final int tag;
     private final File mImageFile;
+    private int mOrientation;
     private ScriptC_saturation mScript;
     private RenderScript mRS;
 
@@ -40,7 +42,7 @@ public class ImageSaver implements Runnable {
 
 
     public ImageSaver(Image image, Handler handler, CaptureRequest captureRequest, File imageFile,
-                      ScriptC_saturation script, RenderScript RS) {
+                      ScriptC_saturation script, RenderScript RS, int orientation) {
 
         mImage = image;
         mHandler = handler;
@@ -49,6 +51,7 @@ public class ImageSaver implements Runnable {
         tag = (int) captureRequest.getTag();
         mScript = script;
         mRS = RS;
+        mOrientation = orientation;
     }
 
     @Override
@@ -159,12 +162,22 @@ public class ImageSaver implements Runnable {
                             e.printStackTrace();
                         }
                     }
+
+                    try {
+                        ExifInterface exifInterface = new ExifInterface(mImageFile.getAbsolutePath());
+                        exifInterface.setAttribute(ExifInterface.TAG_ORIENTATION, "" + mOrientation);
+                        exifInterface.saveAttributes();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "exifInterface IOException");
+                    }
+
+
                 }
 
             }
         }
 
-        protected void onCancelled() {
-        }
     }
 }

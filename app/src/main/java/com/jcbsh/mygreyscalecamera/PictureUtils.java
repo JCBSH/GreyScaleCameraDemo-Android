@@ -50,10 +50,10 @@ public class PictureUtils {
         imageView.setImageDrawable(null);
     }
 
-    public static BitmapDrawable getPortraitDrawable(Activity iView, BitmapDrawable origImage) {
+    public static BitmapDrawable rotateDrawable(Activity iView, BitmapDrawable origImage, int rotation) {
         Matrix m = new Matrix();
 
-        m.postRotate(90);
+        m.postRotate(rotation);
         Bitmap br = Bitmap.createBitmap(origImage.getBitmap(), 0, 0,
                 origImage.getIntrinsicWidth(), origImage.getIntrinsicHeight(),
                 m, true);
