@@ -11,7 +11,6 @@ import android.renderscript.Allocation;
 import android.renderscript.RenderScript;
 import android.util.Log;
 
-import com.bignerdranch.android.eora3d.ScriptC_saturation;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import com.bignerdranch.android.eora3d.ScriptC_saturation;
 
 import java.io.File;
 import java.util.Arrays;

@@ -34,7 +34,6 @@ import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -546,8 +545,6 @@ abstract class AbstractCameraFragment extends Fragment {
         float centerX = viewRect.centerX();
         float centerY = viewRect.centerY();
 
-        int width;
-        int height;
         int cropWidth;
         int cropHeight;
         RectF bufferRect = new RectF(0, 0, previewSize.getHeight(), previewSize.getWidth());
@@ -555,31 +552,14 @@ abstract class AbstractCameraFragment extends Fragment {
         matrix.setRectToRect(viewRect, bufferRect, Matrix.ScaleToFit.FILL);
 
         if (Surface.ROTATION_90 == deviceRotation || Surface.ROTATION_270 == deviceRotation) {
-            width = viewWidth;
-            height = viewHeight;
 
             cropWidth = cropPreviewSize.getWidth();
             cropHeight = cropPreviewSize.getHeight();
         } else {
-            width = viewHeight;
-            height = viewWidth;
-
             cropWidth = cropPreviewSize.getHeight();
             cropHeight = cropPreviewSize.getWidth();
         }
 
-        if (!checkMatchingAspectRatio(width, height, cropPreviewSize)) {
-            if (checkViewCanContainCropPreview(width, height, cropPreviewSize)) {
-                getPreViewTextureView().setLayoutParams(new FrameLayout.LayoutParams(cropPreviewSize.getHeight(), cropPreviewSize.getWidth()));
-            } else {
-                float previewAspect = cropPreviewSize.getWidth() * 1.0f/cropPreviewSize.getHeight();
-                if (isWidthResizeTarget(width, height, cropPreviewSize)) {
-                    getPreViewTextureView().setLayoutParams(new FrameLayout.LayoutParams(width, (int) (width / previewAspect)));
-                } else {
-                    getPreViewTextureView().setLayoutParams(new FrameLayout.LayoutParams((int) (height * previewAspect), height));
-                }
-            }
-        }
 
 
         float scale = Math.min(
@@ -595,32 +575,6 @@ abstract class AbstractCameraFragment extends Fragment {
 
     }
 
-    private boolean isWidthResizeTarget(int viewWidth, int viewHeight, Size cropPreviewSize) {
-        float viewAspect = viewWidth * 1.0f/ viewHeight;
-        float previewAspect = cropPreviewSize.getWidth() * 1.0f/cropPreviewSize.getHeight();
-        if (viewAspect < previewAspect) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean checkViewCanContainCropPreview(int viewWidth, int viewHeight, Size cropPreviewSize) {
-        if (viewWidth >= cropPreviewSize.getWidth() && viewHeight >= cropPreviewSize.getHeight()) {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkMatchingAspectRatio(int viewWidth, int viewHeight, Size cropPreviewSize) {
-        float viewAspect = viewWidth * 1.0f/ viewHeight;
-        float previewAspect = cropPreviewSize.getWidth() * 1.0f/cropPreviewSize.getHeight();
-        float diff = viewAspect - previewAspect;
-        if (diff < 0.02) {
-            return true;
-        }
-        return false;
-    }
 
     protected Size chooseOptimalSize(Size[] choices, int textureViewWidth,
                                           int textureViewHeight, int maxWidth, int maxHeight, Size aspectRatio) {
@@ -657,25 +611,6 @@ abstract class AbstractCameraFragment extends Fragment {
         }
     }
 
-    protected Size chooseLargestSizeOfAspectRatio(Size[] choices, Size aspectRatio) {
-
-        List<Size> matchRatio = new ArrayList<>();
-        int w = aspectRatio.getWidth();
-        int h = aspectRatio.getHeight();
-        for (Size option : choices) {
-            //Log.d(getFragmentTag(), "chooseOptimalSize option width: " + option.getWidth() + " height: " + option.getHeight());
-            if (option.getHeight() == option.getWidth() * h / w) {
-                //Log.d(getFragmentTag(), "chooseOptimalSize option width: " + option.getWidth() + " height: " + option.getHeight());
-                matchRatio.add(option);
-            }
-        }
-        if (matchRatio.size() > 0) {
-            return Collections.max(matchRatio, new CompareSizesByArea());
-        } else {
-            Log.e(getFragmentTag(), "chooseLargestSizeOfAspectRatio Couldn't find any suitable size");
-            return choices[0];
-        }
-    }
 
     /**
      * Compares two {@code Size}s based on their areas.

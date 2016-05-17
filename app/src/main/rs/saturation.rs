@@ -1,5 +1,5 @@
 #pragma version(1)
-#pragma rs java_package_name(com.bignerdranch.android.eora3d)
+#pragma rs java_package_name(com.jcbsh.mygreyscalecamera)
 #pragma rs_fp_relaxed
 //#include "rs_debug.rsh"
 
