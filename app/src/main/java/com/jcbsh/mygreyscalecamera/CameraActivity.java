@@ -39,7 +39,6 @@ public class CameraActivity extends SingleFragmentActivity implements AbstractCa
             default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
 
     @Override
